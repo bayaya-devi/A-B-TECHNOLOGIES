@@ -2,7 +2,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2';
 import nodemailer from 'npm:nodemailer@^9';
 
 const ADMIN_EMAIL = 'aetbconseil@gmail.com';
-const ADMIN_URL = 'https://bayaya-devi.github.io/A-B-TECHNOLOGIES/admin.html';
+const ADMIN_URL = 'https://bayaya-devi.github.io/A-B-TECHNOLOGIES/portal-ab-gestion-k9m4x.html';
 const allowedOrigins = new Set(['https://bayaya-devi.github.io', 'http://localhost:8000', 'http://127.0.0.1:8000']);
 type EmailMessage = { to: string; subject: string; html: string };
 
