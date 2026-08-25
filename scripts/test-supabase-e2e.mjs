@@ -72,7 +72,7 @@ async function cleanup() {
 try {
   const publicPages = await Promise.all([
     fetch('https://bayaya-devi.github.io/A-B-TECHNOLOGIES/configurateur.html'),
-    fetch('https://bayaya-devi.github.io/A-B-TECHNOLOGIES/admin.html'),
+    fetch('https://bayaya-devi.github.io/A-B-TECHNOLOGIES/portal-ab-gestion-k9m4x.html'),
     fetch('https://bayaya-devi.github.io/A-B-TECHNOLOGIES/configurateur.js'),
   ]);
   assert('pages de production accessibles', publicPages.every(response => response.ok), publicPages.map(response => response.status).join(','));
@@ -190,7 +190,7 @@ try {
   const legacyNote = await api(`/rest/v1/project_requests?id=eq.${request.id}`, {
     method: 'PATCH', token: adminToken, headers: { Prefer: 'return=representation' }, body: { internal_notes: internalNoteText },
   });
-  assert('enregistrement de la note affichée par admin.html', legacyNote.ok && legacyNote.data?.[0]?.internal_notes === internalNoteText, `HTTP ${legacyNote.status}`);
+  assert('enregistrement de la note affichée par portail CRM', legacyNote.ok && legacyNote.data?.[0]?.internal_notes === internalNoteText, `HTTP ${legacyNote.status}`);
   const noteRead = await api(`/rest/v1/admin_notes?request_id=eq.${request.id}&select=note,author_id`, { token: adminToken });
   assert('consultation de la note interne', noteRead.ok && noteRead.data?.[0]?.note === internalNoteText, `lignes=${noteRead.data?.length ?? 0}`);
 
