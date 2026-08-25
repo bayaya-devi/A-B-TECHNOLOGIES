@@ -1,5 +1,7 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 
+const ADMIN_EMAIL = 'aetbconseil@gmail.com';
+const ADMIN_URL = 'https://bayaya-devi.github.io/A-B-TECHNOLOGIES/admin.html';
 const allowedOrigins = new Set([
   'https://bayaya-devi.github.io',
   'http://localhost:8000',
@@ -23,6 +25,12 @@ function escapeHtml(value: unknown) {
   }[character] ?? character));
 }
 
+function display(value: unknown, fallback = 'Non renseigné') {
+  if (Array.isArray(value)) return value.length ? value.join(', ') : fallback;
+  const text = String(value ?? '').trim();
+  return text || fallback;
+}
+
 Deno.serve(async (request) => {
   const headers = cors(request.headers.get('origin'));
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers });
@@ -36,11 +44,14 @@ Deno.serve(async (request) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const resendKey = Deno.env.get('RESEND_API_KEY');
+    const fromEmail = Deno.env.get('NOTIFICATION_FROM_EMAIL');
     const admin = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 
+    // Supabase est relu après l'enregistrement : le corps public n'est jamais la source de vérité.
     const { data: project, error: projectError } = await admin
       .from('project_requests')
-      .select('id,reference,first_name,last_name,company_name,email,phone,request_types,summary,submitted_at')
+      .select('id,reference,first_name,last_name,company_name,email,phone,whatsapp,request_types,summary,submitted_at')
       .eq('id', requestId)
       .eq('reference', reference)
       .maybeSingle();
@@ -48,53 +59,95 @@ Deno.serve(async (request) => {
       return new Response(JSON.stringify({ error: 'Demande inconnue' }), { status: 404, headers });
     }
 
-    const { data: delivery } = await admin
+    const { data: deliveries, error: deliveryError } = await admin
       .from('notification_deliveries')
-      .select('id,status')
+      .select('id,notification_type,recipient,status,attempt_count')
       .eq('request_id', requestId)
-      .eq('channel', 'email')
-      .maybeSingle();
-    if (!delivery || delivery.status === 'sent') {
-      return new Response(JSON.stringify({ accepted: true, notification: delivery?.status ?? 'not_required' }), { status: 200, headers });
+      .order('notification_type');
+    if (deliveryError || !deliveries?.length) {
+      return new Response(JSON.stringify({ accepted: true, stored: true, notifications: [] }), { status: 202, headers });
     }
-
-    const resendKey = Deno.env.get('RESEND_API_KEY');
-    const fromEmail = Deno.env.get('NOTIFICATION_FROM_EMAIL') || 'A&B Technologies <onboarding@resend.dev>';
-    if (!resendKey) {
+    if (!resendKey || !fromEmail) {
       return new Response(JSON.stringify({ accepted: true, stored: true, notification: 'pending_provider_configuration' }), { status: 202, headers });
     }
 
-    const types = Array.isArray(project.request_types) ? project.request_types.join(', ') : 'Non précisé';
-    const sendResponse = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: fromEmail,
-        to: ['aetbconseil@gmail.com'],
+    const summary = project.summary && typeof project.summary === 'object' ? project.summary : {};
+    const adminLink = `${ADMIN_URL}?reference=${encodeURIComponent(project.reference)}`;
+    const fullName = `${project.first_name} ${project.last_name}`.trim();
+    const messages: Record<string, { to: string; subject: string; html: string }> = {
+      admin: {
+        to: ADMIN_EMAIL,
         subject: `Nouvelle demande ${project.reference} — A&B Technologies`,
         html: `<h2>Nouvelle demande projet</h2>
           <p><strong>Référence :</strong> ${escapeHtml(project.reference)}</p>
-          <p><strong>Client :</strong> ${escapeHtml(project.first_name)} ${escapeHtml(project.last_name)}</p>
-          <p><strong>Entreprise :</strong> ${escapeHtml(project.company_name || 'Non précisée')}</p>
+          <p><strong>Client :</strong> ${escapeHtml(fullName)}</p>
+          <p><strong>Entreprise :</strong> ${escapeHtml(display(project.company_name))}</p>
           <p><strong>Email :</strong> ${escapeHtml(project.email)}</p>
-          <p><strong>Téléphone :</strong> ${escapeHtml(project.phone || 'Non précisé')}</p>
-          <p><strong>Demande :</strong> ${escapeHtml(types)}</p>
-          <p><strong>Vision :</strong> ${escapeHtml(project.summary?.vision || 'Non précisée')}</p>
-          <p>Consultez le dossier complet dans l’administration A&B Technologies.</p>`,
-      }),
-    });
-    const provider = await sendResponse.json();
-    if (!sendResponse.ok) {
-      await admin.from('notification_deliveries').update({
-        status: 'failed', attempted_at: new Date().toISOString(), error_message: provider?.message || 'Erreur du fournisseur',
-      }).eq('id', delivery.id);
-      return new Response(JSON.stringify({ accepted: true, stored: true, notification: 'failed' }), { status: 202, headers });
+          <p><strong>Téléphone :</strong> ${escapeHtml(display(project.phone))}</p>
+          <p><strong>WhatsApp :</strong> ${escapeHtml(display(project.whatsapp))}</p>
+          <p><strong>Type de projet :</strong> ${escapeHtml(display(project.request_types))}</p>
+          <p><strong>Objectifs principaux :</strong> ${escapeHtml(display(summary.objectives))}</p>
+          <p><strong>Budget :</strong> ${escapeHtml(display(summary.budget))}</p>
+          <p><strong>Délai :</strong> ${escapeHtml(display(summary.timeline))}</p>
+          <p><strong>Résumé :</strong> ${escapeHtml(display(summary.vision))}</p>
+          <p><strong>Date de soumission :</strong> ${escapeHtml(new Date(project.submitted_at).toLocaleString('fr-FR', { timeZone: 'Africa/Lagos' }))}</p>
+          <p><a href="${escapeHtml(adminLink)}">Ouvrir l’administration A&B</a> puis rechercher <strong>${escapeHtml(project.reference)}</strong>.</p>`,
+      },
+      client: {
+        to: project.email,
+        subject: `Votre demande ${project.reference} a bien été reçue`,
+        html: `<h2>Merci ${escapeHtml(project.first_name)}</h2>
+          <p>Nous confirmons la réception de votre demande auprès d’A&amp;B Technologies.</p>
+          <p>Votre référence est <strong>${escapeHtml(project.reference)}</strong>.</p>
+          <p>Les prochaines étapes sont :</p>
+          <p>analyse de la demande → prise de contact → rendez-vous à distance → éventuel mini-audit → devis.</p>
+          <p>Merci pour votre confiance.</p>`,
+      },
+    };
+
+    const outcomes = [];
+    for (const delivery of deliveries) {
+      if (delivery.status === 'sent') {
+        outcomes.push({ type: delivery.notification_type, status: 'sent' });
+        continue;
+      }
+      const message = messages[delivery.notification_type];
+      if (!message || delivery.recipient.toLowerCase() !== message.to.toLowerCase()) {
+        await admin.from('notification_deliveries').update({
+          status: 'failed', attempted_at: new Date().toISOString(),
+          attempt_count: (delivery.attempt_count ?? 0) + 1,
+          error_message: 'Destinataire ou type de notification incohérent',
+        }).eq('id', delivery.id);
+        outcomes.push({ type: delivery.notification_type, status: 'failed' });
+        continue;
+      }
+
+      try {
+        const sendResponse = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ from: fromEmail, to: [message.to], subject: message.subject, html: message.html }),
+        });
+        const provider = await sendResponse.json().catch(() => ({}));
+        if (!sendResponse.ok) throw new Error(provider?.message || `Resend HTTP ${sendResponse.status}`);
+        await admin.from('notification_deliveries').update({
+          status: 'sent', attempted_at: new Date().toISOString(),
+          attempt_count: (delivery.attempt_count ?? 0) + 1,
+          provider_id: provider.id, error_message: null,
+        }).eq('id', delivery.id);
+        outcomes.push({ type: delivery.notification_type, status: 'sent' });
+      } catch (error) {
+        await admin.from('notification_deliveries').update({
+          status: 'failed', attempted_at: new Date().toISOString(),
+          attempt_count: (delivery.attempt_count ?? 0) + 1,
+          error_message: String(error instanceof Error ? error.message : 'Erreur Resend').slice(0, 1000),
+        }).eq('id', delivery.id);
+        outcomes.push({ type: delivery.notification_type, status: 'failed' });
+      }
     }
 
-    await admin.from('notification_deliveries').update({
-      status: 'sent', attempted_at: new Date().toISOString(), provider_id: provider.id, error_message: null,
-    }).eq('id', delivery.id);
-    return new Response(JSON.stringify({ accepted: true, stored: true, notification: 'sent' }), { status: 200, headers });
+    const allSent = outcomes.length > 0 && outcomes.every((item) => item.status === 'sent');
+    return new Response(JSON.stringify({ accepted: true, stored: true, notifications: outcomes }), { status: allSent ? 200 : 202, headers });
   } catch (error) {
     return new Response(JSON.stringify({ error: error instanceof Error ? error.message : 'Erreur interne' }), { status: 500, headers });
   }
