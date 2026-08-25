@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Préparez votre projet numérique avec A&B Technologies.">
+  <title>Configurateur de projet — A&amp;B Technologies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="configurateur.css">
+</head>
+<body>
+  <header><a class="brand" href="index.html">A&amp;B <span>TECHNOLOGIES</span></a><a class="exit" href="index.html">← Retour au site</a></header>
+  <main class="shell">
+    <aside class="intro"><p class="eyebrow">Votre projet, au clair</p><h1>Construisons une demande qui vous ressemble.</h1><p>Répondez simplement, avec vos mots. Vos réponses créent un pré-cahier des charges que nous examinerons avant notre rendez-vous.</p><div class="trust"><b>✓</b> Sauvegarde automatique sur cet appareil<br><b>✓</b> Vous pouvez revenir en arrière<br><b>✓</b> Envoi sécurisé vers A&amp;B Technologies</div></aside>
+    <section class="panel" aria-live="polite">
+      <div id="setupWarning" class="notice hidden"></div>
+      <div id="wizard">
+        <div class="progress-top"><span id="stepCount">Étape 1</span><span id="saveState">Brouillon enregistré</span></div>
+        <div class="progress"><i id="progressBar"></i></div>
+        <form id="projectForm" novalidate><div id="stepContent"></div>
+          <p id="formError" class="error" role="alert"></p>
+          <div class="actions"><button id="previous" class="secondary" type="button">Précédent</button><button id="next" class="primary" type="button">Continuer</button></div>
+        </form>
+      </div>
+      <section id="confirmation" class="confirmation hidden"><p class="eyebrow">Demande transmise</p><h2>Merci, votre projet est bien enregistré.</h2><p>Votre référence est <strong id="reference"></strong>. Conservez-la pour nos échanges.</p><ol><li>Nous analysons votre demande.</li><li>Nous vous contactons pour proposer un rendez-vous.</li><li>Nous préparons, si pertinent, un premier diagnostic puis un devis.</li></ol><a class="primary link-button" href="index.html">Retour au site</a></section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="configurateur.js"></script>
+</body></html>
