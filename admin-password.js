@@ -41,7 +41,7 @@
         button.textContent = 'Activer mon accès administrateur';
         return;
       }
-      history.replaceState(null, '', 'admin.html');
+      history.replaceState(null, '', 'portal-ab-gestion-k9m4x.html');
       overlay.remove();
       location.reload();
     });
