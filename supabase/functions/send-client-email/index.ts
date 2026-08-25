@@ -158,7 +158,7 @@ Deno.serve(async (request) => {
       event_type: `${communication.type}_sent`, title: `Email envoyé — ${communication.subject}`,
       details: { communication_id: communication.id },
     });
-    return response(origin, { communication: sent, provider: 'gmail-smtp' });
+    return response(origin, { communication: sent, provider: 'gmail-smtp', sender: `A&B Technologies <${ADMIN_EMAIL}>`, replyTo: ADMIN_EMAIL, accepted: mail.accepted || [], rejected: mail.rejected || [] });
   } catch (error) {
     const message = String(error instanceof Error ? error.message : 'Erreur interne').slice(0, 1000);
     if (communicationId) {
