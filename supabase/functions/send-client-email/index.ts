@@ -67,6 +67,11 @@ Deno.serve(async (request) => {
       if (!subject || subject.length > 300 || !body || body.length > 50000) return response(origin, { error: 'Objet ou message invalide' }, 400);
       if (!validUuid(input.idempotencyKey)) return response(origin, { error: 'Clé d’envoi invalide' }, 400);
 
+      const { data: duplicate } = await admin.from('communications').select('*')
+        .eq('idempotency_key', input.idempotencyKey).maybeSingle();
+      if (duplicate?.status === 'sent') return response(origin, { communication: duplicate, idempotent: true });
+      if (duplicate) return response(origin, { error: 'Duplicate request already recorded' }, 409);
+
       if (input.type === 'appointment_proposal') {
         const slots = Array.isArray(input.appointment?.slots) ? input.appointment.slots.slice(0, 5) : [];
         if (!slots.length || slots.some((slot: any) => !slot?.startsAt || Number.isNaN(Date.parse(slot.startsAt)))) {
