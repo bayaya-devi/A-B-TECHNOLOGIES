@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Découvrez les projets numériques réalisés par A&B Technologies.">
+  <title>Nos projets — A&amp;B Technologies</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%2312213f'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='36' font-family='Arial' font-weight='700' fill='white'%3E%26%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site-enhancements.css">
+  <script src="site-theme.js"></script>
+  <style>
+    :root{--navy-900:#0A1730;--navy-800:#12213F;--navy-700:#1B2E52;--silver-100:#EEF1F5;--silver-300:#D8DEE6;--silver-500:#B8C0CC;--silver-700:#8B96A5;--white:#FAFBFC;--text-body:#5C6675;--text-dark:#1A2333;--maxw:1180px;--font-display:'Manrope',sans-serif;--font-body:'Inter',sans-serif}
+    *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:var(--font-body);line-height:1.6;-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}img{display:block;max-width:100%}h1,h2{font-family:var(--font-display);color:var(--text-dark);letter-spacing:-.02em}.container{max-width:var(--maxw);margin:0 auto;padding:0 28px}.projects-header{top:0;left:0;right:0;z-index:100;border-bottom:1px solid var(--ab-border);backdrop-filter:blur(10px)}.nav-inner{display:flex;align-items:center;justify-content:space-between;max-width:var(--maxw);margin:0 auto;padding:14px 28px}.brand{display:flex;align-items:center;gap:10px}.brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--navy-800);color:var(--white);font:800 22px/1 var(--font-display)}.brand span{font:800 15px/1 var(--font-display);letter-spacing:.08em;color:var(--navy-900)}nav.links{display:flex;align-items:center;gap:24px}nav.links a{font:700 13.5px/1 var(--font-display);color:var(--text-dark)}nav.links a:last-child{padding:11px 20px;border-radius:999px;background:var(--navy-800);color:var(--white)}.eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:16px;font:700 12px/1 var(--font-display);letter-spacing:.18em;text-transform:uppercase;color:var(--silver-700)}.eyebrow:before{content:"";width:22px;height:1px;background:var(--silver-500)}.cta-btn{padding:12px 22px;border-radius:999px;background:var(--navy-800);color:var(--white);font:700 13.5px/1 var(--font-display)}footer{padding:44px 0;border-top:1px solid var(--ab-border)}.footer-inner{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--text-body);font-size:13px}a:focus-visible,button:focus-visible{outline:2px solid var(--navy-700);outline-offset:3px}@media(max-width:620px){.container{padding-inline:20px}.nav-inner{padding-inline:20px}nav.links{gap:12px}nav.links a:first-child{display:none}}
+  </style>
+</head>
+<body class="projects-page">
+  <header class="projects-header">
+    <div class="nav-inner">
+      <a class="brand" href="index.html" aria-label="Accueil A&B Technologies">
+        <span class="brand-mark" aria-hidden="true">&amp;</span>
+        <span>A&amp;B TECHNOLOGIES</span>
+      </a>
+      <nav class="links" aria-label="Navigation principale">
+        <a href="index.html">Accueil</a>
+        <a href="configurateur.html">Démarrer un projet</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="projects-main">
+    <section class="projects-hero">
+      <div class="container">
+        <div class="eyebrow">Réalisations</div>
+        <h1>Nos projets</h1>
+        <p>Des outils numériques conçus autour des besoins réels de chaque organisation.</p>
+      </div>
+    </section>
+
+    <section aria-label="Liste de nos projets">
+      <div class="container projects-list">
+        <article class="project-entry">
+          <a class="project-visual" href="https://bayaya-devi.github.io/Workcrute/" target="_blank" rel="noopener noreferrer" aria-label="Ouvrir le site Workcrute">
+            <img src="assets/workcrute-logo.png" alt="Logo Workcrute" width="2048" height="1024">
+          </a>
+          <div class="project-copy">
+            <div class="eyebrow">Plateforme RH</div>
+            <h2>Workcrute</h2>
+            <p>Workcrute est un outil de recrutement et de ressources humaines développé par et pour Call Management Security.</p>
+            <a class="cta-btn" href="https://bayaya-devi.github.io/Workcrute/" target="_blank" rel="noopener noreferrer">Découvrir Workcrute <span aria-hidden="true">↗</span></a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>© A&amp;B Technologies</span>
+      <a href="mailto:aetbconseil@gmail.com">aetbconseil@gmail.com</a>
+    </div>
+  </footer>
+
+  <div class="ab-theme-switcher" role="group" aria-label="Apparence du site">
+    <button type="button" data-theme-choice="auto" aria-label="Thème automatique">Auto</button>
+    <button type="button" data-theme-choice="light" aria-label="Thème clair">☀</button>
+    <button type="button" data-theme-choice="dark" aria-label="Thème sombre">☾</button>
+  </div>
+</body>
+</html>

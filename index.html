@@ -280,6 +280,8 @@
   .mobile-close{position:absolute; top:26px; right:28px; background:none; border:none; color:var(--white); font-size:28px; cursor:pointer;}
   html[dir="rtl"] .mobile-close{right:auto; left:28px;}
 </style>
+<link rel="stylesheet" href="site-enhancements.css">
+<script src="site-theme.js"></script>
 </head>
 <body>
 
@@ -293,6 +295,7 @@
       <a href="#services" data-i18n="nav.services">Services</a>
       <a href="#process" data-i18n="nav.process">Process</a>
       <a href="#why" data-i18n="nav.why">Pourquoi nous</a>
+      <a href="nos-projets.html" data-i18n="nav.projects">Nos projets</a>
       <a href="#contact" data-i18n="nav.contact">Contact</a>
     </nav>
     <div class="nav-right">
@@ -312,6 +315,7 @@
   <a href="#services" data-i18n="nav.services">Services</a>
   <a href="#process" data-i18n="nav.process">Process</a>
   <a href="#why" data-i18n="nav.why">Pourquoi nous</a>
+  <a href="nos-projets.html" data-i18n="nav.projects">Nos projets</a>
   <a href="#contact" data-i18n="nav.contact">Contact</a>
 </div>
 
@@ -467,6 +471,25 @@
     </div>
   </section>
 
+  <!-- ENTREPRISES QUI NOUS FONT CONFIANCE -->
+  <section class="client-trust" aria-labelledby="trusted-title">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow" data-i18n="clients.eyebrow">Nos collaborations</div>
+        <h2 id="trusted-title" data-i18n="clients.title">Les entreprises qui nous font confiance</h2>
+      </div>
+      <div class="trusted-carousel" aria-label="Entreprise cliente">
+        <div class="trusted-track">
+          <span class="trusted-slot" aria-hidden="true"></span>
+          <a class="trusted-client" href="https://bayaya-devi.github.io/Workcrute/" target="_blank" rel="noopener noreferrer" aria-label="Découvrir Workcrute">
+            <img src="assets/workcrute-logo.png" alt="Workcrute" width="2048" height="1024" loading="lazy">
+          </a>
+          <span class="trusted-slot" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- CONTACT -->
   <section id="contact">
     <div class="container">
@@ -509,15 +532,22 @@
     <div class="footer-links">
       <a href="mailto:aetbconseil@gmail.com">aetbconseil@gmail.com</a>
       <a href="#services" data-i18n="nav.services">Services</a>
+      <a href="nos-projets.html" data-i18n="nav.projects">Nos projets</a>
       <a href="#contact" data-i18n="nav.contact">Contact</a>
     </div>
   </div>
 </footer>
 
+<div class="ab-theme-switcher" role="group" aria-label="Apparence du site">
+  <button type="button" data-theme-choice="auto" aria-label="Thème automatique">Auto</button>
+  <button type="button" data-theme-choice="light" aria-label="Thème clair">☀</button>
+  <button type="button" data-theme-choice="dark" aria-label="Thème sombre">☾</button>
+</div>
+
 <script>
 const translations = {
   fr: {
-    "nav.services":"Services", "nav.process":"Process", "nav.why":"Pourquoi nous", "nav.contact":"Contact", "nav.cta":"Démarrer un projet",
+    "nav.services":"Services", "nav.process":"Process", "nav.why":"Pourquoi nous", "nav.projects":"Nos projets", "nav.contact":"Contact", "nav.cta":"Démarrer un projet",
     "hero.eyebrow":"Agence digitale",
     "hero.title":"Créer, développer et faire grandir <span class=\"accent\">votre présence digitale</span>",
     "hero.lead":"A&B Technologies accompagne les indépendants, freelances et petites structures dans le lancement et la croissance de leur activité en ligne : sites, applications, réseaux sociaux et stratégie digitale.",
@@ -550,10 +580,11 @@ const translations = {
     "form.opt1":"Site web", "form.opt2":"Application mobile", "form.opt3":"Réseaux sociaux", "form.opt4":"Audit de visibilité", "form.opt5":"Conseil digital",
     "form.message":"Votre projet en quelques mots", "form.submit":"Envoyer la demande",
     "form.note":"Vous serez redirigé vers votre messagerie pour envoyer votre demande à aetbconseil@gmail.com.",
+    "clients.eyebrow":"Nos collaborations", "clients.title":"Les entreprises qui nous font confiance",
     "footer.tagline":"Créer. Développer. Faire grandir."
   },
   en: {
-    "nav.services":"Services", "nav.process":"Process", "nav.why":"Why us", "nav.contact":"Contact", "nav.cta":"Start a project",
+    "nav.services":"Services", "nav.process":"Process", "nav.why":"Why us", "nav.projects":"Our projects", "nav.contact":"Contact", "nav.cta":"Start a project",
     "hero.eyebrow":"Digital agency",
     "hero.title":"Create, develop and grow <span class=\"accent\">your digital presence</span>",
     "hero.lead":"A&B Technologies helps independents, freelancers and small businesses launch and grow their online activity: websites, apps, social media and digital strategy.",
@@ -586,10 +617,11 @@ const translations = {
     "form.opt1":"Website", "form.opt2":"Mobile app", "form.opt3":"Social media", "form.opt4":"Visibility audit", "form.opt5":"Digital consulting",
     "form.message":"Tell us about your project", "form.submit":"Send request",
     "form.note":"You'll be redirected to your mail app to send your request to aetbconseil@gmail.com.",
+    "clients.eyebrow":"Our collaborations", "clients.title":"Companies that trust us",
     "footer.tagline":"Create. Develop. Grow."
   },
   ar: {
-    "nav.services":"خدماتنا", "nav.process":"منهجيتنا", "nav.why":"لماذا نحن", "nav.contact":"تواصل معنا", "nav.cta":"ابدأ مشروعك",
+    "nav.services":"خدماتنا", "nav.process":"منهجيتنا", "nav.why":"لماذا نحن", "nav.projects":"مشاريعنا", "nav.contact":"تواصل معنا", "nav.cta":"ابدأ مشروعك",
     "hero.eyebrow":"وكالة رقمية",
     "hero.title":"أنشئ، طوّر ونمِّ <span class=\"accent\">حضورك الرقمي</span>",
     "hero.lead":"A&B Technologies ترافق المستقلين وأصحاب المشاريع الصغيرة في إطلاق ونمو نشاطهم عبر الإنترنت: مواقع، تطبيقات، شبكات اجتماعية واستراتيجية رقمية.",
@@ -622,6 +654,7 @@ const translations = {
     "form.opt1":"موقع ويب", "form.opt2":"تطبيق جوال", "form.opt3":"شبكات اجتماعية", "form.opt4":"تدقيق الحضور الرقمي", "form.opt5":"استشارة رقمية",
     "form.message":"صف مشروعك باختصار", "form.submit":"إرسال الطلب",
     "form.note":"سيتم توجيهك إلى بريدك الإلكتروني لإرسال طلبك إلى aetbconseil@gmail.com.",
+    "clients.eyebrow":"تعاوناتنا", "clients.title":"الشركات التي تثق بنا",
     "footer.tagline":"أنشئ. طوّر. نمِّ."
   }
 };

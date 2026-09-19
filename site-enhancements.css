@@ -1,0 +1,287 @@
+:root {
+  --ab-surface: #fafbfc;
+  --ab-surface-soft: #eef1f5;
+  --ab-panel: #ffffff;
+  --ab-border: #d8dee6;
+  --ab-text: #1a2333;
+  --ab-muted: #5c6675;
+  --ab-header: rgba(250, 251, 252, 0.9);
+  --ab-shadow: rgba(18, 33, 63, 0.18);
+}
+
+html[data-theme="dark"] {
+  --navy-900: #f3f7ff;
+  --navy-800: #d8e5ff;
+  --navy-700: #adc5ef;
+  --silver-100: #17233a;
+  --silver-300: #2c3b55;
+  --silver-500: #7790b8;
+  --silver-700: #a9b7cc;
+  --white: #0b1322;
+  --text-body: #b8c4d8;
+  --text-dark: #f3f7ff;
+  --ab-surface: #0b1322;
+  --ab-surface-soft: #101c30;
+  --ab-panel: #132139;
+  --ab-border: #2c3b55;
+  --ab-text: #f3f7ff;
+  --ab-muted: #b8c4d8;
+  --ab-header: rgba(11, 19, 34, 0.9);
+  --ab-shadow: rgba(0, 0, 0, 0.42);
+}
+
+body {
+  background: var(--ab-surface);
+  color: var(--ab-muted);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+header,
+header.scrolled {
+  background: var(--ab-header);
+  border-color: var(--ab-border);
+}
+
+html[data-theme="dark"] .hero {
+  background:
+    radial-gradient(ellipse 900px 500px at 82% -10%, rgba(119, 144, 184, 0.16), transparent 60%),
+    linear-gradient(180deg, #0b1322 0%, #101c30 100%);
+}
+
+html[data-theme="dark"] .why {
+  background: linear-gradient(160deg, #172a49, #0f1c31);
+}
+
+html[data-theme="dark"] .why .sec-head h2,
+html[data-theme="dark"] .why .sec-head p,
+html[data-theme="dark"] .why-item h3 {
+  color: #f3f7ff;
+}
+
+html[data-theme="dark"] .why-item p {
+  color: #c7d2e4;
+}
+
+html[data-theme="dark"] .mobile-menu {
+  background: #0b1322;
+}
+
+html[data-theme="dark"] .mobile-menu a,
+html[data-theme="dark"] .mobile-close {
+  color: #f3f7ff;
+}
+
+html[data-theme="dark"] .cta-btn {
+  background: #d8e5ff;
+  color: #0b1322;
+}
+
+html[data-theme="dark"] .cta-btn:hover {
+  background: #ffffff;
+}
+
+.ab-theme-switcher {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 180;
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid var(--ab-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ab-panel) 92%, transparent);
+  box-shadow: 0 14px 40px -18px var(--ab-shadow);
+  backdrop-filter: blur(12px);
+}
+
+.ab-theme-switcher button {
+  min-width: 42px;
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ab-muted);
+  font: 700 11px/1 var(--font-display, 'Manrope', sans-serif);
+  cursor: pointer;
+}
+
+.ab-theme-switcher button.active {
+  background: var(--navy-800);
+  color: var(--white);
+}
+
+html[data-theme="dark"] .ab-theme-switcher button.active {
+  background: #d8e5ff;
+  color: #0b1322;
+}
+
+.client-trust {
+  padding: 92px 0;
+  background: var(--ab-surface-soft);
+  border-block: 1px solid var(--ab-border);
+  overflow: hidden;
+}
+
+.client-trust .sec-head {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.client-trust .eyebrow {
+  justify-content: center;
+}
+
+.trusted-carousel {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  overflow: hidden;
+  padding: 28px 0;
+}
+
+.trusted-track {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: 28px;
+  min-width: 100%;
+}
+
+.trusted-slot {
+  min-height: 178px;
+  border-radius: 18px;
+}
+
+.trusted-client {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 178px;
+  padding: 24px;
+  border: 1px solid var(--ab-border);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 26px 54px -30px var(--ab-shadow);
+  transform: scale(1.08);
+  animation: trustedDrift 6s ease-in-out infinite;
+}
+
+.trusted-client img {
+  width: 100%;
+  max-width: 290px;
+  height: auto;
+}
+
+@keyframes trustedDrift {
+  0%, 100% { transform: translateX(-7px) scale(1.08); }
+  50% { transform: translateX(7px) scale(1.08); }
+}
+
+.projects-page {
+  min-height: 100vh;
+  background: var(--ab-surface);
+}
+
+.projects-header {
+  position: sticky;
+  background: var(--ab-header);
+}
+
+.projects-main {
+  padding-top: 132px;
+}
+
+.projects-hero {
+  padding: 70px 0 46px;
+}
+
+.projects-hero h1 {
+  max-width: 760px;
+  font-size: clamp(40px, 7vw, 74px);
+  line-height: 1.02;
+}
+
+.projects-hero p {
+  max-width: 650px;
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  padding-bottom: 110px;
+}
+
+.project-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: clamp(34px, 7vw, 88px);
+  min-height: 430px;
+  padding: clamp(26px, 5vw, 52px);
+  border: 1px solid var(--ab-border);
+  border-radius: 24px;
+  background: var(--ab-panel);
+  box-shadow: 0 32px 70px -48px var(--ab-shadow);
+}
+
+.project-entry:nth-child(even) .project-visual { order: 2; }
+
+.project-visual {
+  display: flex;
+  align-items: center;
+  min-height: 300px;
+  padding: 30px;
+  border-radius: 18px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.project-visual img {
+  width: 100%;
+  height: auto;
+}
+
+.project-copy h2 {
+  margin-bottom: 18px;
+  font-size: clamp(28px, 4vw, 42px);
+}
+
+.project-copy p {
+  margin-bottom: 28px;
+  font-size: 17px;
+}
+
+.project-copy .cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 900px) {
+  .trusted-track { gap: 14px; }
+  .project-entry { grid-template-columns: 1fr; min-height: 0; }
+  .project-entry:nth-child(even) .project-visual { order: 0; }
+  .projects-header nav.links { display: flex; }
+}
+
+@media (max-width: 620px) {
+  .ab-theme-switcher { right: 10px; bottom: 10px; }
+  .ab-theme-switcher button { min-width: 36px; padding-inline: 8px; }
+  #siteHeader .nav-right { gap: 8px; }
+  #siteHeader .nav-right > .cta-btn { display: none; }
+  #siteHeader .lang-switch button { padding-inline: 9px; }
+  .footer-links { max-width: 100%; flex-wrap: wrap; gap: 12px 18px; }
+  .trusted-track { grid-template-columns: 8px minmax(0, 1fr) 8px; }
+  .trusted-client { min-height: 140px; padding: 18px; }
+  .trusted-slot { min-height: 140px; }
+  .projects-main { padding-top: 96px; }
+  .projects-hero { padding-top: 44px; }
+  .project-entry { padding: 20px; border-radius: 18px; }
+  .project-visual { min-height: 210px; padding: 18px; }
+  .projects-header .brand span { display: none; }
+}
