@@ -1,0 +1,15 @@
+{
+  "name": "ab-technologies-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check audit-express.js && node --check audit-crm.js",
+    "test:audit": "node scripts/test-audit-unit.mjs"
+  },
+  "dependencies": {
+    "pdf-lib": "1.17.1"
+  },
+  "devDependencies": {
+    "wrangler": "^4.142.0"
+  }
+}

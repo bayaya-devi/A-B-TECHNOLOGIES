@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Audits Express — Portail A&amp;B Technologies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="crm.css"><link rel="stylesheet" href="audit-crm.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">A&amp;B <span>TECHNOLOGIES</span> · PORTAIL COMMERCIAL</div>
+    <nav class="admin-sections" aria-label="Sections du CRM"><a href="portal-ab-gestion-k9m4x.html">Demandes clients</a><a class="active" href="audits-express-admin.html">Audits Express</a></nav>
+    <div class="top-actions"><span id="adminName"></span><button id="refresh" class="ghost hidden">Actualiser</button><button id="logout" class="ghost hidden">Déconnexion</button></div>
+  </header>
+  <main class="shell">
+    <section id="loginBox" class="login"><p class="eyebrow-admin">Audits Express</p><h1>Accès sécurisé</h1><p class="muted">Connectez-vous à l’espace Audit Express A&amp;B Technologies.</p><div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="username" value="aetbconseil@gmail.com"></div><div class="field"><label for="password">Mot de passe</label><input id="password" type="password" autocomplete="current-password"></div><p id="loginError" class="error" role="alert"></p><button id="login" class="primary">Connexion</button></section>
+    <section id="auditApp" class="hidden">
+      <div id="auditMetrics" class="dashboard audit-dashboard"></div>
+      <div class="filters audit-filters"><input id="auditSearch" placeholder="Référence, client, entreprise ou e-mail"><select id="auditStatus"><option value="">Tous les statuts</option><option value="NEW">Nouvelle demande</option><option value="IN_REVIEW">En analyse</option><option value="REPORT_READY">Rapport prêt</option><option value="TO_VALIDATE">À valider</option><option value="SENT">Envoyé</option><option value="CLOSED">Terminé</option></select><button id="auditClear" class="secondary">Effacer</button></div>
+      <p id="auditError" class="error" role="alert"></p>
+      <div class="crm-grid"><aside id="auditList" class="panel list"></aside><article id="auditDetail" class="panel detail"><div class="empty"><h2>Audits Express</h2><p>Sélectionnez une demande pour consulter toutes les réponses.</p></div></article></div>
+    </section>
+  </main>
+  <script src="audit-crm.js"></script>
+</body>
+</html>

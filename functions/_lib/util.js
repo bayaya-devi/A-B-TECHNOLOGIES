@@ -1,0 +1,18 @@
+export const STATUS_LABELS = {NEW:'Nouvelle demande',IN_REVIEW:'En analyse',REPORT_READY:'Rapport prêt',TO_VALIDATE:'À valider',SENT:'Envoyé',CLOSED:'Terminé'};
+export const OBJECTIVE_LABELS = {obtenir_plus_de_clients:'Obtenir plus de clients',ameliorer_visibilite:'Améliorer ma visibilité',moderniser_image:'Moderniser mon image',ameliorer_site:'Améliorer mon site',mieux_apparaitre_google:'Mieux apparaître sur Google',developper_reseaux:'Développer mes réseaux sociaux',vendre_en_ligne:'Vendre en ligne',outils_numeriques:'Mettre en place des outils numériques',autre:'Autre'};
+export const PROBLEM_LABELS = {peu_visible:'Mon entreprise est peu visible',site_inadapte:'Mon site ne répond plus à mes besoins',manque_clients:'Ma présence numérique apporte peu de clients',reseaux_inactifs:'Mes réseaux sociaux sont peu actifs',image_vieillissante:'Mon image numérique paraît vieillissante',difficile_a_gerer:'Mes outils sont difficiles à gérer',aucune_presence:'Je n’ai pas encore de présence numérique',autre:'Autre'};
+export const PRESENCE_LABELS = {website:'Site internet',google:'Google / Google Maps',instagram:'Instagram',facebook:'Facebook',tiktok:'TikTok',linkedin:'LinkedIn',other:'Autre présence'};
+
+export function json(data,status=200,extra={}){return new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store',...extra}})}
+export function cleanText(value,max,required=false){const result=typeof value==='string'?value.trim().replace(/\u0000/g,''):'';if(required&&!result)throw new Error('Un champ obligatoire est manquant.');if(result.length>max)throw new Error('Une réponse dépasse la longueur autorisée.');return result}
+export function cleanEmail(value){const email=cleanText(value,254,true).toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('Adresse e-mail invalide.');return email}
+export function cleanPhone(value){const phone=cleanText(value,40,true);if(!/^[+()0-9 .-]{6,40}$/.test(phone))throw new Error('Numéro de téléphone invalide.');return phone}
+export function cleanUrl(value){const raw=cleanText(value,500);if(!raw)return'';let url;try{url=new URL(raw)}catch{throw new Error('Une URL fournie est invalide.')}if(!['http:','https:'].includes(url.protocol))throw new Error('Seules les URLs HTTP et HTTPS sont acceptées.');return url.toString()}
+export function html(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+export function display(value){return String(value??'').trim()||'Non renseigné'}
+export function parseJson(value,fallback={}){try{return JSON.parse(value)}catch{return fallback}}
+export async function sha256(value){const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value));return [...new Uint8Array(bytes)].map(b=>b.toString(16).padStart(2,'0')).join('')}
+export function clientIp(request){return request.headers.get('cf-connecting-ip')||request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()||'unknown'}
+export function safeExternalUrl(value){try{const url=new URL(value);return ['http:','https:'].includes(url.protocol)?url.toString():''}catch{return''}}
+export function dateFr(value){return new Date(value).toLocaleString('fr-FR',{timeZone:'Africa/Lagos',dateStyle:'long',timeStyle:'short'})}
+export function presenceLines(audit){const digital=typeof audit.digital_presence==='string'?parseJson(audit.digital_presence):audit.digital_presence||{};return Object.entries(digital).filter(([,v])=>v?.present).map(([key,v])=>`${PRESENCE_LABELS[key]||key}${v.url?` : ${v.url}`:''}`)}

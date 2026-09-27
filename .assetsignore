@@ -1,0 +1,14 @@
+node_modules
+functions
+cloudflare
+scripts
+supabase
+.git
+.github
+.wrangler
+package.json
+package-lock.json
+wrangler.jsonc
+README-CONFIGURATEUR.md
+*.ps1
+*.mjs

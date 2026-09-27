@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "a-b-technologies",
+  "pages_build_output_dir": ".",
+  "compatibility_date": "2026-09-27",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "AUDIT_DB",
+      "database_name": "ab-audit-express",
+      "database_id": "5e36299f-ccfa-4599-8c18-c941d815f1fc"
+    }
+  ],
+  "vars": {
+    "EMAIL_PROVIDER": "brevo",
+    "ADMIN_EMAIL": "aetbconseil@gmail.com",
+    "EMAIL_FROM": "aetbconseil@gmail.com",
+    "EMAIL_FROM_NAME": "A&B Technologies",
+    "ADMIN_URL": "https://a-b-technologies.pages.dev/audits-express-admin.html"
+  }
+}

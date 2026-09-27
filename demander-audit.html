@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Demandez gratuitement un Audit Express de votre présence numérique à A&B Technologies.">
+  <title>Audit Express gratuit — A&amp;B Technologies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="audit-express.css">
+</head>
+<body>
+  <header class="audit-header">
+    <a class="brand" href="index.html">A&amp;B <span>TECHNOLOGIES</span></a>
+    <a class="exit" href="index.html">← Retour au site</a>
+  </header>
+
+  <main class="audit-shell">
+    <aside class="audit-aside">
+      <p class="eyebrow">Audit Express gratuit</p>
+      <h1>Un regard clair sur votre présence numérique.</h1>
+      <p>Présentez-nous votre activité et vos priorités en quelques minutes. A&amp;B Technologies examinera votre visibilité, vos supports numériques et les principaux points à améliorer.</p>
+      <div class="trust-card">
+        <p><b>01</b> Une demande simple, sans vocabulaire technique</p>
+        <p><b>02</b> Un premier regard adapté à votre activité</p>
+        <p><b>03</b> Une confirmation avec une référence unique</p>
+      </div>
+    </aside>
+
+    <section class="audit-panel" aria-live="polite">
+      <div id="auditStart" class="start-card">
+        <p class="eyebrow">Avant de commencer</p>
+        <h2>Parlez-nous de votre situation.</h2>
+        <p>Le parcours comporte 6 étapes courtes. Vous pourrez relire et modifier toutes vos réponses avant l’envoi définitif.</p>
+        <ul>
+          <li>Votre activité et vos coordonnées</li>
+          <li>Votre présence numérique actuelle</li>
+          <li>Votre objectif et votre difficulté principale</li>
+        </ul>
+        <button id="startAudit" class="primary" type="button">Commencer mon audit</button>
+      </div>
+
+      <div id="auditWizard" class="hidden">
+        <div class="progress-top"><span id="stepCount">Étape 1 sur 6</span><span id="saveState">Brouillon conservé</span></div>
+        <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+        <form id="auditForm" novalidate>
+          <div id="stepContent"></div>
+          <div class="honeypot" aria-hidden="true"><label for="websiteConfirm">Ne pas remplir</label><input id="websiteConfirm" tabindex="-1" autocomplete="off"></div>
+          <p id="formError" class="error" role="alert"></p>
+          <div class="actions">
+            <button id="cancelAudit" class="cancel" type="button">Annuler</button>
+            <div class="actions-right">
+              <button id="previous" class="secondary" type="button">Retour</button>
+              <button id="next" class="primary" type="button">Suivant</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <section id="confirmation" class="confirmation hidden">
+        <div class="confirmation-mark" aria-hidden="true">✓</div>
+        <p class="eyebrow">Demande enregistrée</p>
+        <h2>Votre demande d’Audit Express a bien été reçue.</h2>
+        <p>Votre référence est :</p>
+        <strong id="auditReference" class="reference"></strong>
+        <p>Une confirmation va également être envoyée à l’adresse e-mail renseignée. Conservez cette référence pour nos échanges.</p>
+        <a class="primary link-button" href="index.html">Retour au site</a>
+      </section>
+    </section>
+  </main>
+
+  <footer class="audit-footer">© A&amp;B Technologies — Créer. Développer. Faire grandir.</footer>
+  <div class="ab-theme-switcher" role="group" aria-label="Apparence"><button type="button" data-theme-choice="light" aria-label="Thème clair">Clair</button><button type="button" data-theme-choice="auto" aria-label="Thème automatique">Auto</button><button type="button" data-theme-choice="dark" aria-label="Thème sombre">Sombre</button></div>
+  <script src="supabase-config.js"></script>
+  <script src="site-theme.js"></script><script src="audit-express.js"></script>
+</body>
+</html>
