@@ -6,7 +6,7 @@ export const PRESENCE_LABELS = {website:'Site internet',google:'Google / Google 
 export function json(data,status=200,extra={}){return new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store',...extra}})}
 export function cleanText(value,max,required=false){const result=typeof value==='string'?value.trim().replace(/\u0000/g,''):'';if(required&&!result)throw new Error('Un champ obligatoire est manquant.');if(result.length>max)throw new Error('Une réponse dépasse la longueur autorisée.');return result}
 export function cleanEmail(value){const email=cleanText(value,254,true).toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('Adresse e-mail invalide.');return email}
-export function cleanPhone(value){const phone=cleanText(value,40,true);if(!/^[+()0-9 .-]{6,40}$/.test(phone))throw new Error('Numéro de téléphone invalide.');return phone}
+export function cleanPhone(value,required=true){const phone=cleanText(value,40,required);if(!phone)return'';if(!/^[+()0-9 .-]{6,40}$/.test(phone))throw new Error('Numéro de téléphone invalide.');return phone}
 export function cleanUrl(value){const raw=cleanText(value,500);if(!raw)return'';let url;try{url=new URL(raw)}catch{throw new Error('Une URL fournie est invalide.')}if(!['http:','https:'].includes(url.protocol))throw new Error('Seules les URLs HTTP et HTTPS sont acceptées.');return url.toString()}
 export function html(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 export function display(value){return String(value??'').trim()||'Non renseigné'}

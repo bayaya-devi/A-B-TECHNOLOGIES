@@ -127,3 +127,57 @@ CREATE INDEX IF NOT EXISTS audit_notes_idx ON audit_notes(audit_id, created_at D
 CREATE INDEX IF NOT EXISTS audit_notifications_idx ON audit_notification_deliveries(audit_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS audit_rate_limit_idx ON audit_submission_limits(fingerprint_hash, created_at DESC);
 CREATE INDEX IF NOT EXISTS audit_login_limit_idx ON audit_admin_login_attempts(fingerprint_hash, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS configurator_reference_counters (
+  year INTEGER PRIMARY KEY,
+  last_number INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS configurator_requests (
+  id TEXT PRIMARY KEY,
+  reference TEXT NOT NULL UNIQUE,
+  submission_key TEXT NOT NULL UNIQUE,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  company_name TEXT,
+  email TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  whatsapp TEXT,
+  country TEXT NOT NULL,
+  city TEXT,
+  preferred_language TEXT,
+  request_types TEXT NOT NULL DEFAULT '[]',
+  answers TEXT NOT NULL,
+  consent_at TEXT NOT NULL,
+  submitted_at TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS configurator_notification_deliveries (
+  id TEXT PRIMARY KEY,
+  request_id TEXT NOT NULL REFERENCES configurator_requests(id) ON DELETE CASCADE,
+  notification_type TEXT NOT NULL CHECK (notification_type IN ('admin','client')),
+  recipient TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','processing','sent','failed','unknown')),
+  provider TEXT,
+  provider_id TEXT,
+  idempotency_key TEXT NOT NULL UNIQUE,
+  attempt_count INTEGER NOT NULL DEFAULT 0,
+  attempted_at TEXT,
+  sent_at TEXT,
+  locked_at TEXT,
+  error_message TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  UNIQUE (request_id, notification_type)
+);
+
+CREATE TABLE IF NOT EXISTS configurator_submission_limits (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  fingerprint_hash TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS configurator_requests_email_idx ON configurator_requests(email);
+CREATE INDEX IF NOT EXISTS configurator_notifications_idx ON configurator_notification_deliveries(request_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS configurator_rate_limit_idx ON configurator_submission_limits(fingerprint_hash, created_at DESC);
