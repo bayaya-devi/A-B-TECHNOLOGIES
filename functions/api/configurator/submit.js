@@ -15,8 +15,6 @@ export async function onRequestPost(context){
     const body=await request.json();
     if(cleanText(body.websiteConfirm,100))return json({accepted:true},202,headers);
     if(!uuid(body.submissionId))throw new Error('Identifiant de soumission invalide.');
-    const elapsed=Date.now()-Number(body.loadedAt||0);
-    if(!Number.isFinite(elapsed)||elapsed<2500)throw new Error('Veuillez prendre quelques secondes pour compléter le formulaire avant de l’envoyer.');
     const existing=await env.AUDIT_DB.prepare('SELECT id,reference FROM configurator_requests WHERE submission_key=?').bind(body.submissionId).first();
     if(existing)return json({success:true,reference:existing.reference,duplicate:true},200,headers);
     const raw=bounded(body.payload),identity=raw.identity&&typeof raw.identity==='object'?raw.identity:{},answers=bounded(raw.answers);
