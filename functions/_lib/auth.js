@@ -1,17 +1,55 @@
-import {clientIp,json,sha256} from './util.js';
+import {json} from './util.js';
 
-const encoder=new TextEncoder();
-const SESSION_TTL=8*60*60;
+const AUTH_TIMEOUT_MS=5000;
 
-function bytesToBase64Url(bytes){let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
-function base64UrlToBytes(value){const normalized=value.replace(/-/g,'+').replace(/_/g,'/');const binary=atob(normalized.padEnd(Math.ceil(normalized.length/4)*4,'='));return Uint8Array.from(binary,c=>c.charCodeAt(0))}
-async function hmac(value,secret){const key=await crypto.subtle.importKey('raw',encoder.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign','verify']);return new Uint8Array(await crypto.subtle.sign('HMAC',key,encoder.encode(value)))}
-async function verifyPassword(password,encoded){const [version,iterationsText,saltText,hashText]=String(encoded||'').split('$');if(version!=='pbkdf2-sha256')return false;const iterations=Number(iterationsText);if(!Number.isInteger(iterations)||iterations<100000)return false;const key=await crypto.subtle.importKey('raw',encoder.encode(password),'PBKDF2',false,['deriveBits']);const derived=new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:base64UrlToBytes(saltText),iterations},key,256));const expected=base64UrlToBytes(hashText);if(derived.length!==expected.length)return false;let diff=0;for(let i=0;i<derived.length;i++)diff|=derived[i]^expected[i];return diff===0}
-async function verifyAdminPassword(password,env){if(env.AUDIT_ADMIN_PASSWORD){const supplied=await sha256(password),expected=await sha256(env.AUDIT_ADMIN_PASSWORD);let diff=0;for(let i=0;i<expected.length;i++)diff|=expected.charCodeAt(i)^supplied.charCodeAt(i);return diff===0}return verifyPassword(password,env.AUDIT_ADMIN_PASSWORD_HASH)}
-export async function makePasswordHash(password){const salt=crypto.getRandomValues(new Uint8Array(16));const iterations=210000;const key=await crypto.subtle.importKey('raw',encoder.encode(password),'PBKDF2',false,['deriveBits']);const hash=new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt,iterations},key,256));return `pbkdf2-sha256$${iterations}$${bytesToBase64Url(salt)}$${bytesToBase64Url(hash)}`}
-export async function createSession(email,env){const payload=bytesToBase64Url(encoder.encode(JSON.stringify({email,exp:Math.floor(Date.now()/1000)+SESSION_TTL,nonce:crypto.randomUUID()})));const signature=bytesToBase64Url(await hmac(payload,env.AUDIT_SESSION_SECRET));return `${payload}.${signature}`}
-export function sessionCookie(token){return `ab_audit_session=${token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${SESSION_TTL}`}
-export function clearSessionCookie(){return 'ab_audit_session=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0'}
-export async function requireAdmin(context){const cookie=context.request.headers.get('cookie')||'';const token=cookie.split(';').map(v=>v.trim()).find(v=>v.startsWith('ab_audit_session='))?.slice(17);if(!token)return null;const [payload,signature]=token.split('.');if(!payload||!signature)return null;const expected=await hmac(payload,context.env.AUDIT_SESSION_SECRET);const actual=base64UrlToBytes(signature);if(expected.length!==actual.length)return null;let diff=0;for(let i=0;i<expected.length;i++)diff|=expected[i]^actual[i];if(diff)return null;try{const data=JSON.parse(new TextDecoder().decode(base64UrlToBytes(payload)));if(data.exp<Math.floor(Date.now()/1000)||data.email!==context.env.ADMIN_EMAIL)return null;return data}catch{return null}}
-export async function authenticateAdmin(context,email,password){await context.env.AUDIT_DB.prepare('CREATE TABLE IF NOT EXISTS audit_admin_login_attempts (id INTEGER PRIMARY KEY AUTOINCREMENT,fingerprint_hash TEXT NOT NULL,successful INTEGER NOT NULL DEFAULT 0,created_at TEXT NOT NULL)').run();const fingerprint=await sha256(`${clientIp(context.request)}|${context.env.AUDIT_RATE_LIMIT_SALT}`);const since=new Date(Date.now()-15*60*1000).toISOString();const recent=await context.env.AUDIT_DB.prepare('SELECT COUNT(*) AS total FROM audit_admin_login_attempts WHERE fingerprint_hash=? AND successful=0 AND created_at>=?').bind(fingerprint,since).first();if(Number(recent?.total||0)>=5)return {ok:false,status:429,error:'Trop de tentatives. Réessayez dans 15 minutes.'};const ok=email.toLowerCase()===String(context.env.ADMIN_EMAIL||'').toLowerCase()&&await verifyAdminPassword(password,context.env);await context.env.AUDIT_DB.prepare('INSERT INTO audit_admin_login_attempts(fingerprint_hash,successful,created_at) VALUES(?,?,?)').bind(fingerprint,ok?1:0,new Date().toISOString()).run();return ok?{ok:true}:{ok:false,status:401,error:'Identifiants incorrects.'}}
-export async function adminGuard(context){const admin=await requireAdmin(context);return admin?null:json({error:'Authentification administrateur requise.'},401)}
+function bearerToken(request){
+  const header=request.headers.get('authorization')||'';
+  const match=header.match(/^Bearer\s+([^\s]+)$/i);
+  return match?.[1]||'';
+}
+
+async function supabaseFetch(env,path,token){
+  const base=String(env.SUPABASE_URL||'').replace(/\/+$/,'');
+  const anonKey=env.SUPABASE_ANON_KEY;
+  if(!base||!anonKey)throw new Error('Configuration Supabase indisponible.');
+  return fetch(`${base}${path}`,{
+    headers:{apikey:anonKey,authorization:`Bearer ${token}`,accept:'application/json'},
+    signal:AbortSignal.timeout(AUTH_TIMEOUT_MS),
+  });
+}
+
+/** Validate a Supabase access token and its app_admins membership on every request. */
+export async function requireAdmin(context){
+  if(context.data?.adminAuth)return context.data.adminAuth;
+  const token=bearerToken(context.request);
+  if(!token)return null;
+  try{
+    const authResponse=await supabaseFetch(context.env,'/auth/v1/user',token);
+    if(authResponse.status===401||authResponse.status===403)return null;
+    if(!authResponse.ok)throw new Error(`Supabase Auth returned ${authResponse.status}.`);
+    const user=await authResponse.json();
+    if(!user?.id||!user?.email)return null;
+    const membershipResponse=await supabaseFetch(context.env,`/rest/v1/app_admins?user_id=eq.${encodeURIComponent(user.id)}&select=user_id&limit=1`,token);
+    if(membershipResponse.status===401)return null;
+    if(!membershipResponse.ok)throw new Error(`Admin membership check returned ${membershipResponse.status}.`);
+    const memberships=await membershipResponse.json();
+    const admin=Array.isArray(memberships)&&memberships.length>0?{id:user.id,email:user.email}:null;
+    if(context.data)context.data.adminAuth=admin||{denied:true};
+    return admin||{denied:true};
+  }catch(error){
+    if(error instanceof Error&&error.name==='TimeoutError')throw new Error('Supabase Auth ne répond pas. Réessayez.');
+    throw error;
+  }
+}
+
+export async function adminGuard(context){
+  try{
+    const admin=await requireAdmin(context);
+    if(admin?.denied)return json({error:'Accès administrateur refusé.'},403);
+    if(!admin)return json({error:'Authentification administrateur requise.'},401);
+    return null;
+  }catch(error){
+    console.error('admin-auth-unavailable',error instanceof Error?error.message:'unknown');
+    return json({error:'Vérification administrateur temporairement indisponible.'},503,{'retry-after':'5'});
+  }
+}

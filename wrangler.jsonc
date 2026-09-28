@@ -16,6 +16,9 @@
     "ADMIN_EMAIL": "aetbconseil@gmail.com",
     "EMAIL_FROM": "aetbconseil@gmail.com",
     "EMAIL_FROM_NAME": "A&B Technologies",
-    "ADMIN_URL": "https://a-b-technologies.pages.dev/audits-express-admin.html"
+    "ADMIN_URL": "https://a-b-technologies.pages.dev/audits-express-admin.html",
+    "SUPABASE_URL": "https://elusxpsvgimtavlypjlp.supabase.co",
+    // Public anon key only; authorization still requires a valid user token and app_admins membership.
+    "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsdXN4cHN2Z2ltdGF2bHlwamxwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2NjM1ODAsImV4cCI6MjEwMzIzOTU4MH0.gXQEmUf4DEjwZPwlEgNglYrgANr341fLkcmAdH9mspM"
   }
 }

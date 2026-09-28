@@ -1,18 +1,16 @@
 import {cleanEmail,cleanPhone,cleanText,clientIp,json,sha256} from '../../_lib/util.js';
+import {corsHeaders,isAllowedRequestOrigin,optionsResponse,readJson} from '../../_lib/http.js';
 import {processConfiguratorNotifications} from '../../_lib/configurator-notifications.js';
 
-const origins=new Set(['https://a-b-technologies.pages.dev','https://bayaya-devi.github.io','http://localhost:8788','http://127.0.0.1:8788']);
-const cors=request=>{const origin=request.headers.get('origin');return origin&&origins.has(origin)?{'access-control-allow-origin':origin,'access-control-allow-headers':'content-type','access-control-allow-methods':'POST, OPTIONS','vary':'Origin'}:{}};
 const uuid=value=>typeof value==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 function bounded(value,max=20000){const text=JSON.stringify(value??{});if(text.length>max)throw new Error('Les réponses sont trop volumineuses.');return JSON.parse(text)}
 
-export function onRequestOptions({request}){return new Response(null,{status:204,headers:cors(request)})}
+export function onRequestOptions({request}){return optionsResponse(request)}
 export async function onRequestPost(context){
-  const {request,env}=context,headers=cors(request),origin=request.headers.get('origin');
-  if(origin&&!origins.has(origin))return json({error:'Origine non autorisée.'},403,headers);
+  const {request,env}=context,headers=corsHeaders(request);
+  if(!isAllowedRequestOrigin(request))return json({error:'Origine non autorisée.'},403);
   try{
-    if(Number(request.headers.get('content-length')||0)>65536)return json({error:'Requête trop volumineuse.'},413,headers);
-    const body=await request.json();
+    const body=await readJson(request,65536);
     if(cleanText(body.websiteConfirm,100))return json({accepted:true},202,headers);
     if(!uuid(body.submissionId))throw new Error('Identifiant de soumission invalide.');
     const existing=await env.AUDIT_DB.prepare('SELECT id,reference FROM configurator_requests WHERE submission_key=?').bind(body.submissionId).first();
@@ -32,5 +30,5 @@ export async function onRequestPost(context){
     ]);
     context.waitUntil(processConfiguratorNotifications(env,id).catch(()=>{}));
     return json({success:true,reference,notifications:[{type:'admin',status:'pending'},{type:'client',status:'pending'}]},201,headers);
-  }catch(error){return json({error:error instanceof Error?error.message:'Demande invalide.'},400,headers)}
+  }catch(error){return json({error:error instanceof Error?error.message:'Demande invalide.'},error?.status||400,headers)}
 }

@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { cleanEmail, cleanPhone, cleanUrl } from '../functions/_lib/util.js';
-import { makePasswordHash } from '../functions/_lib/auth.js';
+import { requireAdmin } from '../functions/_lib/auth.js';
+import { readJson } from '../functions/_lib/http.js';
 import { generateAuditSummaryPdf } from '../functions/_lib/pdf.js';
 
 assert.equal(cleanEmail(' Client@Example.com '), 'client@example.com');
@@ -10,8 +11,20 @@ assert.throws(() => cleanEmail('adresse-invalide'));
 assert.throws(() => cleanUrl('javascript:alert(1)'));
 assert.equal(cleanUrl('https://example.com'), 'https://example.com/');
 
-const passwordHash = await makePasswordHash('Test-password-123!');
-assert.match(passwordHash, /^pbkdf2-sha256\$210000\$/);
+const request = new Request('https://example.com/api', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ok: true }) });
+assert.deepEqual(await readJson(request, 32), { ok: true });
+await assert.rejects(() => readJson(new Request('https://example.com/api', { method: 'POST', body: 'x'.repeat(40) }), 16), /trop volumineuse/i);
+
+const originalFetch = globalThis.fetch;
+let membershipRows = [{ user_id: 'admin-id' }];
+globalThis.fetch = async url => String(url).includes('/auth/v1/user')
+  ? Response.json({ id: 'admin-id', email: 'admin@example.com' })
+  : Response.json(membershipRows);
+const adminContext = { request: new Request('https://example.com/api', { headers: { authorization: 'Bearer valid-token' } }), env: { SUPABASE_URL: 'https://project.supabase.co', SUPABASE_ANON_KEY: 'public-anon-key' }, data: {} };
+assert.deepEqual(await requireAdmin(adminContext), { id: 'admin-id', email: 'admin@example.com' });
+membershipRows = [];
+assert.deepEqual(await requireAdmin({ ...adminContext, data: {} }), { denied: true });
+globalThis.fetch = originalFetch;
 
 const pdf = await generateAuditSummaryPdf({
   reference: 'AUD-2026-000001', status: 'NEW', submitted_at: new Date().toISOString(),
