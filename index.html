@@ -281,6 +281,7 @@
   html[dir="rtl"] .mobile-close{right:auto; left:28px;}
 </style>
 <link rel="stylesheet" href="site-enhancements.css">
+<link rel="stylesheet" href="site-shell.css">
 <script src="site-theme.js"></script>
 </head>
 <body>
@@ -700,6 +701,7 @@ burger.addEventListener('click', ()=> mobileMenu.classList.add('open'));
 mobileClose.addEventListener('click', ()=> mobileMenu.classList.remove('open'));
 mobileMenu.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> mobileMenu.classList.remove('open')));
 </script>
+<script src="site-shell.js"></script>
 
 </body>
 </html>

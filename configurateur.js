@@ -50,9 +50,9 @@
     if(type === 'textarea') control = `<textarea data-key="${key}"${req}>${esc(v)}</textarea>`;
     else if(type === 'select') control = `<select data-key="${key}"${req}><option value="">Sélectionnez…</option>${options.map(o=>`<option${v===o?' selected':''}>${esc(o)}</option>`).join('')}</select>`;
     else control = `<input data-key="${key}" type="${type}" value="${esc(v)}"${req}>`;
-    return `<div class="field${full}"><label>${esc(label)}${required?' *':''}</label>${control}</div>`;
+    return `<div class="field${full}"><label>${esc(label)}${required?'<span class="required-mark" aria-hidden="true">*</span>':''}</label>${control}</div>`;
   };
-  const choices = ([key,values,required]) => `<div class="field full"><label>${key==='request_types'?'Votre demande':'Choisissez tout ce qui s’applique'}${required?' *':''}</label><div class="choices">${values.map(o=>`<label class="choice"><input type="checkbox" data-choice="${key}" value="${esc(o)}" ${(value(key)||[]).includes(o)?'checked':''}>${esc(o)}</label>`).join('')}</div></div>`;
+  const choices = ([key,values,required]) => `<div class="field full"><label>${key==='request_types'?'Votre demande':'Choisissez tout ce qui s’applique'}${required?'<span class="required-mark" aria-hidden="true">*</span>':''}</label><div class="choices">${values.map(o=>`<label class="choice"><input type="checkbox" data-choice="${key}" value="${esc(o)}" ${(value(key)||[]).includes(o)?'checked':''}>${esc(o)}</label>`).join('')}</div></div>`;
   const special = (kind) => {
     if(kind==='references') return `<div class="field full"><label>Sites de référence</label><p class="hint">URL, ce que vous appréciez, ce que vous voulez éviter.</p><div id="references">${renderReferences()}</div><button class="add" type="button" data-add-reference>+ Ajouter une référence</button></div>`;
     if(kind==='priorities') return `<div class="field full"><label>Fonctionnalités</label><div class="priorities">${opts.features.map(f=>`<div class="repeater-row"><span>${esc(f)}</span><select data-priority="${esc(f)}"><option>Je ne sais pas</option>${['Indispensable','Souhaitée','Peut attendre'].map(x=>`<option ${(value('feature_priorities')[f]||'')===x?'selected':''}>${x}</option>`).join('')}</select></div>`).join('')}</div></div>`;
