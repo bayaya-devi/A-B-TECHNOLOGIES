@@ -662,7 +662,7 @@ const translations = {
   }
 };
 
-function applyLang(lang){
+function applyLang(lang, persist=true){
   const dict = translations[lang];
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
@@ -677,15 +677,19 @@ function applyLang(lang){
   document.querySelectorAll('.lang-switch button').forEach(b=>{
     b.classList.toggle('active', b.dataset.lang === lang);
   });
-  localStorage.setItem('ab-lang', lang);
+  if(persist) localStorage.setItem('ab-lang', lang);
 }
+
+window.AB_HOME_TRANSLATIONS = translations;
+window.AB_HOME_APPLY = applyLang;
 
 document.querySelectorAll('.lang-switch button').forEach(btn=>{
   btn.addEventListener('click', ()=> applyLang(btn.dataset.lang));
 });
 
 const saved = localStorage.getItem('ab-lang');
-applyLang(saved && translations[saved] ? saved : 'fr');
+const deviceLang = (navigator.languages || [navigator.language || 'fr']).map(value=>value.toLowerCase()).find(value=>value.startsWith('ar')||value.startsWith('en')||value.startsWith('fr')) || 'fr';
+applyLang(saved && translations[saved] ? saved : deviceLang.startsWith('ar') ? 'ar' : deviceLang.startsWith('en') ? 'en' : 'fr', !!saved);
 
 // Header scroll state
 const header = document.getElementById('siteHeader');
@@ -701,7 +705,7 @@ burger.addEventListener('click', ()=> mobileMenu.classList.add('open'));
 mobileClose.addEventListener('click', ()=> mobileMenu.classList.remove('open'));
 mobileMenu.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> mobileMenu.classList.remove('open')));
 </script>
-<script src="site-shell.js"></script><script src="site-shell-theme.js"></script>
+<script src="site-language.js"></script><script src="site-shell.js"></script><script src="site-shell-theme.js"></script>
 
 </body>
 </html>

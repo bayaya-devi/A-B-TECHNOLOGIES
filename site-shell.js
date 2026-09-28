@@ -9,7 +9,17 @@
       const header=document.createElement('header');
       header.className='ab-site-header';
       const cta=(!audit&&!config)?'<a class="ab-primary-cta" href="configurateur.html">Démarrer un projet</a>':'';
-      header.innerHTML=`<div class="ab-site-nav"><a class="ab-logo-link" href="${home}" aria-label="Accueil A&B Technologies"><img src="assets/ab-technologies-logo.png" alt="A&B Technologies — Créer. Développer. Faire grandir."></a><span class="ab-nav-spacer"></span>${cta}<button class="ab-menu-toggle" type="button" aria-label="Ouvrir la navigation" aria-controls="abMenu" aria-expanded="false"><span></span></button><nav id="abMenu" class="ab-menu-panel" aria-label="Navigation principale"><a href="${home}#services">Services</a><a href="${home}#process">Process</a><a href="${home}#why">Pourquoi nous</a><a href="nos-projets.html">Nos projets</a><a href="${home}#contact">Contact</a><i class="ab-menu-divider"></i><div class="ab-menu-group" aria-label="Langue"><button type="button" data-lang="fr">FR</button><button type="button" data-lang="en">EN</button><button type="button" data-lang="ar">AR</button></div><div class="ab-menu-group" aria-label="Thème"><button type="button" data-theme-choice="auto">Auto</button><button type="button" data-theme-choice="light">☀</button><button type="button" data-theme-choice="dark">☾</button></div></nav></div>`;
+      header.innerHTML=`<div class="ab-site-nav">
+        <a class="ab-logo-link" href="${home}" aria-label="Accueil A&B Technologies"><img src="assets/ab-technologies-logo.png" alt="A&B Technologies — Créer. Développer. Faire grandir."></a>
+        <span class="ab-nav-spacer"></span>${cta}
+        <button class="ab-menu-toggle" type="button" aria-label="Ouvrir la navigation" aria-controls="abMenu" aria-expanded="false"><span></span></button>
+        <nav id="abMenu" class="ab-menu-panel" aria-label="Navigation principale">
+          <a href="${home}#services">Services</a><a href="${home}#process">Process</a><a href="${home}#why">Pourquoi nous</a><a href="nos-projets.html">Nos projets</a><a href="${home}#contact">Contact</a>
+          <i class="ab-menu-divider"></i>
+          <div class="ab-menu-group" aria-label="Langue"><button type="button" data-lang="fr">FR</button><button type="button" data-lang="en">EN</button><button type="button" data-lang="ar">AR</button><button type="button" data-lang="auto">AUTO</button></div>
+          <div class="ab-menu-group" aria-label="Thème"><button type="button" data-theme-choice="auto">Auto</button><button type="button" data-theme-choice="light">☀</button><button type="button" data-theme-choice="dark">☾</button></div>
+        </nav>
+      </div>`;
       oldHeader.replaceWith(header);
       const toggle=header.querySelector('.ab-menu-toggle'),menu=header.querySelector('.ab-menu-panel');
       toggle.addEventListener('click',()=>{const open=!menu.classList.contains('is-open');menu.classList.toggle('is-open',open);toggle.setAttribute('aria-expanded',String(open))});
