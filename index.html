@@ -281,44 +281,24 @@
   html[dir="rtl"] .mobile-close{right:auto; left:28px;}
 </style>
 <link rel="stylesheet" href="site-enhancements.css">
-<link rel="stylesheet" href="site-shell.css?v=visibility-20260929">
+<link rel="stylesheet" href="site-shell.css?v=public-shell-20260929-2">
 <script src="site-theme.js"></script>
 </head>
 <body>
 
-<header id="siteHeader">
-  <div class="nav-inner">
-    <a href="#top" class="brand">
-      <img src="assets/ab-technologies-logo.png" alt="A&B Technologies">
-      <span>A&amp;B TECHNOLOGIES</span>
-    </a>
-    <nav class="links">
-      <a href="#services" data-i18n="nav.services">Services</a>
-      <a href="#process" data-i18n="nav.process">Process</a>
-      <a href="#why" data-i18n="nav.why">Pourquoi nous</a>
-      <a href="#collaborations" data-i18n="nav.projects">Nos projets</a>
-      <a href="#contact" data-i18n="nav.contact">Contact</a>
+<header class="ab-site-header" aria-label="Navigation principale">
+  <div class="ab-site-nav">
+    <a class="ab-logo-link" href="index.html" aria-label="Accueil A&amp;B Technologies"><img src="assets/ab-technologies-logo.png" alt="A&amp;B Technologies — Créer. Développer. Faire grandir."></a>
+    <span class="ab-nav-spacer"></span><a class="ab-primary-cta" href="configurateur.html">Démarrer un projet</a>
+    <button class="ab-menu-toggle" type="button" aria-label="Ouvrir la navigation" aria-controls="abMenu" aria-expanded="false"><span></span></button>
+    <nav id="abMenu" class="ab-menu-panel" aria-label="Navigation principale">
+      <div class="ab-menu-heading"><span>Navigation</span><button class="ab-menu-close" type="button" aria-label="Fermer la navigation">×</button></div>
+      <a href="index.html#services">Services</a><a href="index.html#process">Process</a><a href="index.html#why">Pourquoi nous</a><a href="index.html#collaborations">Nos projets</a><a href="index.html#contact">Contact</a>
+      <i class="ab-menu-divider"></i><div class="ab-menu-section"><span class="ab-menu-label">Langue</span><div class="ab-menu-group" aria-label="Langue"><button type="button" data-lang="fr">Français</button><button type="button" data-lang="en">English</button><button type="button" data-lang="ar">العربية</button></div></div>
+      <div class="ab-menu-section"><span class="ab-menu-label">Thème</span><div class="ab-menu-group" aria-label="Thème"><button type="button" data-theme-choice="auto">Auto</button><button type="button" data-theme-choice="light">Clair</button><button type="button" data-theme-choice="dark">Sombre</button></div></div>
     </nav>
-    <div class="nav-right">
-      <div class="lang-switch" role="group" aria-label="Langue">
-        <button data-lang="fr" class="active">FR</button>
-        <button data-lang="en">EN</button>
-        <button data-lang="ar">AR</button>
-      </div>
-      <a href="configurateur.html" class="cta-btn" data-i18n="nav.cta">Démarrer un projet</a>
-      <button class="burger" id="burgerBtn" aria-label="Menu"><span></span><span></span><span></span></button>
-    </div>
   </div>
 </header>
-
-<div class="mobile-menu" id="mobileMenu">
-  <button class="mobile-close" id="mobileClose">&times;</button>
-  <a href="#services" data-i18n="nav.services">Services</a>
-  <a href="#process" data-i18n="nav.process">Process</a>
-  <a href="#why" data-i18n="nav.why">Pourquoi nous</a>
-  <a href="#collaborations" data-i18n="nav.projects">Nos projets</a>
-  <a href="#contact" data-i18n="nav.contact">Contact</a>
-</div>
 
 <main id="top">
 
@@ -523,23 +503,7 @@
 
 </main>
 
-<footer>
-  <div class="container footer-inner">
-    <div>
-      <div class="footer-brand">
-        <img src="assets/ab-technologies-logo.png" alt="A&B Technologies">
-        <b>A&amp;B TECHNOLOGIES</b>
-      </div>
-      <div class="footer-tagline" data-i18n="footer.tagline">Créer. Développer. Faire grandir.</div>
-    </div>
-    <div class="footer-links">
-      <a href="mailto:aetbconseil@gmail.com">aetbconseil@gmail.com</a>
-      <a href="#services" data-i18n="nav.services">Services</a>
-      <a href="#collaborations" data-i18n="nav.projects">Nos projets</a>
-      <a href="#contact" data-i18n="nav.contact">Contact</a>
-    </div>
-  </div>
-</footer>
+<footer class="ab-site-footer"><div class="ab-footer-inner"><span>© A&amp;B Technologies — Tous droits réservés.</span><div class="ab-footer-links"><a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=aetbconseil%40gmail.com" target="_blank" rel="noopener" aria-label="Écrire à A&amp;B Technologies par e-mail">aetbconseil@gmail.com</a><a class="ab-whatsapp" href="https://wa.me/212767722203" target="_blank" rel="noopener" aria-label="Écrire à A&amp;B Technologies sur WhatsApp">+212 767 722 203</a></div></div></footer>
 
 <div class="ab-theme-switcher" role="group" aria-label="Apparence du site">
   <button type="button" data-theme-choice="auto" aria-label="Thème automatique">Auto</button>
@@ -691,21 +655,8 @@ const saved = localStorage.getItem('ab-lang');
 const deviceLang = (navigator.languages || [navigator.language || 'fr']).map(value=>value.toLowerCase()).find(value=>value.startsWith('ar')||value.startsWith('en')||value.startsWith('fr')) || 'fr';
 applyLang(saved && translations[saved] ? saved : deviceLang.startsWith('ar') ? 'ar' : deviceLang.startsWith('en') ? 'en' : 'fr', !!saved);
 
-// Header scroll state
-const header = document.getElementById('siteHeader');
-window.addEventListener('scroll', ()=>{
-  header.classList.toggle('scrolled', window.scrollY > 10);
-});
-
-// Mobile menu
-const burger = document.getElementById('burgerBtn');
-const mobileMenu = document.getElementById('mobileMenu');
-const mobileClose = document.getElementById('mobileClose');
-burger.addEventListener('click', ()=> mobileMenu.classList.add('open'));
-mobileClose.addEventListener('click', ()=> mobileMenu.classList.remove('open'));
-mobileMenu.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> mobileMenu.classList.remove('open')));
 </script>
-<script src="site-language.js?v=visibility-20260929"></script><script src="site-shell.js?v=visibility-20260929"></script><script src="site-shell-theme.js?v=visibility-20260929"></script>
+<script src="site-language.js?v=public-shell-20260929-2"></script><script src="site-shell.js?v=public-shell-20260929-2"></script><script src="site-shell-theme.js?v=public-shell-20260929-2"></script>
 
 </body>
 </html>
