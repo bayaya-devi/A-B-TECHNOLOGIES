@@ -1,6 +1,7 @@
 (()=>{
   const ready=()=>{
     const path=location.pathname.toLowerCase();
+    if(/(?:^|\/)(?:admin|audits-express-admin|portal-ab-gestion[^/]*|definir-mot-de-passe)(?:\.html)?\/?$/.test(path))return;
     const audit=path.includes('demander-audit');
     const config=path.includes('configurateur');
     const home='index.html';
@@ -35,7 +36,7 @@
     const oldFooter=document.querySelector('footer');
     const footer=document.createElement('footer');
     footer.className='ab-site-footer';
-    footer.innerHTML='<div class="ab-footer-inner"><span>© A&amp;B Technologies — Tous droits réservés.</span><a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=aetbconseil%40gmail.com" target="_blank" rel="noopener" aria-label="Écrire à A&B Technologies par e-mail">aetbconseil@gmail.com</a><a class="ab-whatsapp" href="https://wa.me/212767722203" target="_blank" rel="noopener" aria-label="Écrire à A&B Technologies sur WhatsApp">+212 767 722 203</a></div>';
+    footer.innerHTML='<div class="ab-footer-inner"><span>© A&amp;B Technologies — Tous droits réservés.</span><div class="ab-footer-links"><a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=aetbconseil%40gmail.com" target="_blank" rel="noopener" aria-label="Écrire à A&B Technologies par e-mail">aetbconseil@gmail.com</a><a class="ab-whatsapp" href="https://wa.me/212767722203" target="_blank" rel="noopener" aria-label="Écrire à A&B Technologies sur WhatsApp">+212 767 722 203</a></div></div>';
     if(oldFooter)oldFooter.replaceWith(footer);else document.body.append(footer);
     document.querySelectorAll('.ab-theme-switcher').forEach(el=>el.remove());
     const reveal=document.querySelectorAll('main section, main article, .trust, .project-row, .audit-shell > *, .shell > *');
