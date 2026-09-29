@@ -12,5 +12,6 @@ export async function onRequest({request,next}){
   headers.set('permissions-policy','camera=(), microphone=(), geolocation=()');
   if(new URL(request.url).protocol==='https:')headers.set('strict-transport-security','max-age=31536000');
   if(pathname.startsWith('/api/')||SENSITIVE_PAGES.has(pathname))headers.set('cache-control','no-store');
+  else if(pathname==='/'||pathname.endsWith('.html'))headers.set('cache-control','no-cache, must-revalidate');
   return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
 }
