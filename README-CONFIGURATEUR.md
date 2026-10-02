@@ -1,24 +1,15 @@
 # Configurateur A&B Technologies
 
-Le site statique contient désormais un configurateur public (`configurateur.html`) et une administration protégée (`admin.html`). Les demandes ne sont confirmées qu’après l’enregistrement réel dans Supabase.
+Le parcours public `configurateur.html` envoie les demandes à `/api/configurator/submit` sur Cloudflare Pages. La fonction enregistre les réponses dans la base D1 `ab-audit-express` et prépare les notifications administrateur et client via Brevo.
 
-## Mise en service Supabase
+Le portail commercial `portal-ab-gestion-k9m4x.html` utilise Supabase pour ses dossiers historiques, rendez-vous, devis et communications. Il ne lit pas les demandes du configurateur enregistrées dans D1. Tant qu'une intégration vérifiée n'est pas en place, ces demandes ne sont pas gérables depuis ce CRM. `admin.html` est une ancienne page désactivée.
 
-1. Créez un projet Supabase.
-2. Dans **SQL Editor**, exécutez intégralement [`supabase/schema.sql`](supabase/schema.sql).
-3. Dans **Authentication > Users**, créez l’utilisateur administrateur avec son email et son mot de passe.
-4. Copiez son UUID puis exécutez la dernière commande indiquée dans `schema.sql` pour l’ajouter à `app_admins`.
-5. Dans `supabase-config.js`, renseignez l’URL du projet et sa clé **anon** (jamais la clé `service_role`).
-6. Dans **Authentication > URL Configuration**, ajoutez `https://bayaya-devi.github.io/A-B-TECHNOLOGIES/` aux URL de redirection autorisées.
+Le formulaire `definir-mot-de-passe.html` dirige vers le portail commercial après une activation réussie. L'accès administrateur nécessite un compte Supabase autorisé dans `app_admins`; ne placez jamais de clé `service_role` dans le navigateur ou le dépôt.
 
-## Notification email (optionnelle)
+## Vérifications locales
 
-L’enregistrement est autonome : l’absence ou l’échec d’une notification ne supprime jamais une demande. Pour recevoir un email à chaque demande, déployez une Supabase Edge Function (ou un webhook serveur) qui accepte `requestId` et `reference`, vérifie le secret côté serveur, puis appelle votre prestataire d’email. Placez son URL dans `notificationFunctionUrl`.
+- `npm run check` et `npm run test:audit` valident la syntaxe et les contrôles unitaires disponibles.
+- `node node_modules/wrangler/bin/wrangler.js pages dev . --port 8788` démarre Cloudflare Pages avec D1 local.
+- `node node_modules/wrangler/bin/wrangler.js d1 execute ab-audit-express --local --file cloudflare/schema.sql` initialise uniquement D1 local.
 
-## Publication GitHub Pages
-
-Validez les fichiers, poussez-les sur la branche publiée par GitHub Pages, puis vérifiez :
-
-* `…/configurateur.html` : parcours, brouillon, erreurs et envoi réel ;
-* `…/admin.html` : connexion admin, liste, détail, statut, notes et documents ;
-* aucun mot de passe, clé API privée ou clé `service_role` n’est ajouté au dépôt.
+Les scripts `scripts/test-crm-e2e.mjs` et `scripts/test-notification-live.mjs` créent des dossiers et envoient des messages réels. Ne les lancez que dans un environnement de test autorisé et isolé.
